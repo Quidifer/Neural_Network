@@ -10,8 +10,12 @@ class Layer {
 public:
     vector<Neuron> Neurons;
     vector<vector<double>> adjacencyMatrix;
-    
+
+    void construct(int);
     ~Layer();
+private:
+    double fRand(double, double);
+
 };
 
 #endif

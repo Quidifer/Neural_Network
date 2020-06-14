@@ -53,7 +53,7 @@ int main() {
 
     for (unsigned i = 0; i < num; ++i) {
         label[i] = in(icin, 1);
-        cout << label[i] << ' ';
+        // cout << label[i] << ' ';
     }
 
     cout << endl;
