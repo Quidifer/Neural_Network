@@ -4,7 +4,8 @@
 using namespace std;
 
 struct Neuron {
-    double brightness;
-}
+    double activation;
+    double bias;
+};
 
 #endif
