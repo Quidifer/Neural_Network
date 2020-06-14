@@ -22,7 +22,7 @@ unsigned int in(ifstream& icin, unsigned int size) {
 
 int main() {
     ifstream icin;
-    icin.open("t10k-images.idx3-ubyte", ios::binary);
+    icin.open("train/t10k-images.idx3-ubyte", ios::binary);
     magic = in(icin, 4);
     num = in(icin, 4);
     rows = in(icin, 4);
@@ -44,7 +44,7 @@ int main() {
     cout << cols << endl;
     icin.close();
 
-    icin.open("t10k-labels.idx1-ubyte", ios::binary);
+    icin.open("train/t10k-labels.idx1-ubyte", ios::binary);
     magic = in(icin, 4);
     num = in(icin, 4);
     unsigned first;
