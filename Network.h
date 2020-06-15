@@ -21,7 +21,7 @@ private:
     vector<Layer> Layers;
 public:
     Network();
-    int guessImage(vector<vector<unsigned int>>);
+    int guessImage(vector<vector<unsigned int> >);
     int forward_propogation();
 private:
     double fRand(double, double);

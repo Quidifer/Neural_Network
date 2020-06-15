@@ -1,7 +1,9 @@
 #include <iostream>
 #include <fstream>
+#include <vector>
 #include "Neuron.h"
 #include "Network.h"
+#include "Layer.h"
 
 using namespace std;
 
@@ -24,13 +26,14 @@ unsigned int in(ifstream& icin, unsigned int size) {
 }
 
 /** Takes in pass-by-reference IMAGES 3D array and plots the images. */
-void writeToFile(unsigned &images) {
+void writeToFile(unsigned ***images) {
     FILE * f = fopen("out.ppm", "wb");
-    for (int i = 0; i < )
-    for (unsigned int row = 0; row < sizeof(images[i]); row++) {
-        for (unsigned int col = 0; col < sizeof(images[i][row]); col++) {
-            cout << images[i][row][col];
-                fputc(images[i][row][col], f);
+    for (int i = 0; i < sizeof(images); i++) {
+        for (unsigned int row = 0; row < sizeof(images[i]); row++) {
+            for (unsigned int col = 0; col < sizeof(images[i][row]); col++) {
+                cout << images[i][row][col];
+                    fputc(images[i][row][col], f);
+            }
         }
     }
     fclose(f);
@@ -44,8 +47,7 @@ int main() {
     num = in(icin, 4);
     rows = in(icin, 4);
     cols = in(icin, 4);
-
-    unsigned images[2000][rows][cols];
+    unsigned ***images;
 
     for (unsigned k = 0; k < 2000; ++k) {
         for (unsigned i = 0; i < rows; ++i) {
@@ -57,7 +59,7 @@ int main() {
         }
     }
 
-    writeToFile(images)
+    writeToFile(static_cast<unsigned int ***>(images));
     
     // cout << magic << endl;
     // cout << num << endl;
@@ -79,7 +81,7 @@ int main() {
     icin.close();
 
     Network new_network;
-    vector<vector<unsigned int>> test_image;
+    vector<vector<unsigned int> > test_image;
     test_image.resize(rows);
     for (unsigned i = 0; i < rows; ++i) {
         test_image.at(i).resize(cols);

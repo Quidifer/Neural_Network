@@ -30,7 +30,7 @@ Network::Network() {
     }
 }
 
-int Network::guessImage(vector<vector<unsigned int>> image) {
+int Network::guessImage(vector<vector<unsigned int> > image) {
     unsigned stepper = 0;
 
     for (unsigned i = 0; i < image.size(); ++i) { //initialize acitvations of the input layer

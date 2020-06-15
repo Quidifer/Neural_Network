@@ -4,3 +4,7 @@
 *.out
 
 .test/
+
+CMakeLists.txt
+
+Cmake-build-debug/
