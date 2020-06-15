@@ -9,9 +9,10 @@ using namespace std;
 class Layer {
 public:
     vector<Neuron> Neurons;
-    vector<vector<double>> adjacencyMatrix;
+    double **adjacencyMatrix;
 
     void construct(int);
+    void initialize_weights(Layer *);
     ~Layer();
 private:
     double fRand(double, double);

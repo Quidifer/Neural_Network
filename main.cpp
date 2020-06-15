@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include "Neuron.h"
+#include "Network.h"
 
 using namespace std;
 
@@ -59,6 +60,8 @@ int main() {
     cout << endl;
     cout << endl;
     icin.close();
+
+    Network new_network;
 
     return 0;
 }

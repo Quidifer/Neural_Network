@@ -21,6 +21,7 @@ private:
     vector<Layer> Layers;
 public:
     Network();
+    void guessImage();
 private:
     double fRand(double, double);
 
