@@ -1,7 +1,10 @@
 #include <iostream>
 #include <fstream>
+<<<<<<< HEAD
 #include <stdio.h>
 #include <vector>
+#include "Neuron.h"
+#include "Network.h"
 
 using namespace std;
 
@@ -70,12 +73,14 @@ int main() {
 
     for (unsigned i = 0; i < num; ++i) {
         label[i] = in(icin, 1);
-//        cout << label[i] << ' ';
+        // cout << label[i] << ' ';
     }
 
     cout << endl;
     cout << endl;
     icin.close();
+
+    Network new_network;
 
     return 0;
 }
