@@ -1,5 +1,7 @@
 #include <iostream>
 #include <fstream>
+#include <stdio.h>
+#include <vector>
 
 using namespace std;
 
@@ -19,6 +21,16 @@ unsigned int in(ifstream& icin, unsigned int size) {
     return ans;
 }
 
+//void writeToFile(unsigned (*images)[rows][cols]) {
+//    FILE * f = fopen("out.ppm", "wb");
+//    for (unsigned int row = 0; row < sizeof(images[i]); row++) {
+//        for (unsigned int col = 0; col < sizeof(images[i][row]); col++) {
+//            cout << images[i][row][col];
+//                fputc(images[i][row][col], f);
+//        }
+//    }
+//    fclose(f);
+//}
 
 int main() {
     ifstream icin;
@@ -28,18 +40,24 @@ int main() {
     rows = in(icin, 4);
     cols = in(icin, 4);
 
-    unsigned images[2000][rows][cols];
+    vector<vector<vector<unsigned>>> images;
 
-    for (unsigned k = 0; k < 2000; ++k) {
+    for (unsigned k = 0; k < 10000; ++k) {
         for (unsigned i = 0; i < rows; ++i) {
-            for (unsigned j=0; j < cols; ++j) {
-                images[k][i][j] = in(icin, 1);
-                // cout << image[k][i][j] << ' ';
+            for (unsigned j = 0; j < cols; ++j) {
+                images = in(icin, 1);
+                cout << images[k][i][j] << ' ';
             }
             // cout << endl;
         }
     }
-
+    
+    
+//    writeToFile(&images[0]);
+    
+//    cout << images;
+//    writeToFile();
+    
     // cout << magic << endl;
     // cout << num << endl;
     // cout << rows << endl;
@@ -52,7 +70,7 @@ int main() {
 
     for (unsigned i = 0; i < num; ++i) {
         label[i] = in(icin, 1);
-        cout << label[i] << ' ';
+//        cout << label[i] << ' ';
     }
 
     cout << endl;
