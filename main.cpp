@@ -62,6 +62,17 @@ int main() {
     icin.close();
 
     Network new_network;
+    vector<vector<unsigned int>> test_image;
+    test_image.resize(rows);
+    for (unsigned i = 0; i < rows; ++i) {
+        test_image.at(i).resize(cols);
+    }
+    for (unsigned i = 0; i < rows; ++i) {
+        for (unsigned j = 0; j < cols; ++j) {
+            test_image.at(i).at(j) = images[0][i][j];
+        }
+    }
+    new_network.guessImage(test_image);
 
     return 0;
 }
