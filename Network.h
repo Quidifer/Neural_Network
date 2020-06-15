@@ -21,9 +21,14 @@ private:
     vector<Layer> Layers;
 public:
     Network();
-    void guessImage();
+    int guessImage(vector<vector<unsigned int>>);
+    int forward_propogation();
 private:
     double fRand(double, double);
+    int forward_propogation(Layer*, int);
+    void matrix_vector_mult(Layer*, vector <double> &);
+    double sigmoid(double);
+
 
 };
 
