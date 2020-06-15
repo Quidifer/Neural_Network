@@ -11,8 +11,8 @@ using namespace std;
 
 /*
 constructor
-creates a neural network with biases of each neuron set to 0,
-random weights between -1 and 1.
+creates a neural network with biases of each neuron set to 0
+and random weights between -1 and 1.
 There are 4 layers in total
     1 input layer of 784 nodes to represent all pixels in the initial image
     2 hidden layers, each with 16 nodes each
@@ -39,6 +39,10 @@ Network::Network() {
     }
 }
 
+/*
+Destructor
+destroys all Layers within the network
+*/
 Network::~Network() {
     while(Layers.size() > 0) {
         Layers.pop_back();
@@ -46,6 +50,7 @@ Network::~Network() {
 }
 
 /*
+input: 2d vector of a 28x28 grayclase image of a handwritten number. Pixels are between 0 and 255
 guess the image of the given input. 28x28 grayscale image of a handwritten number
 */
 int Network::guessImage(vector<vector<unsigned int>> image) {
@@ -62,6 +67,7 @@ int Network::guessImage(vector<vector<unsigned int>> image) {
     }
 
     int guess = forward_propogation();
+    return guess;
 }
 
 /*
@@ -82,6 +88,8 @@ int Network::forward_propogation(Layer* curr_layer, int index) {
     vector<double> activations;
      matrix_vector_mult(curr_layer, activations);
 
+     cout << "ACTIVATIONS" << endl;
+     cout << "before sig  " << "after sig" << endl;
      for (unsigned i = 0; i < activations.size(); ++i) { //add biases to activations
          activations.at(i) += curr_layer->Neurons.at(i).bias;
          cout << activations.at(i) << "    ";

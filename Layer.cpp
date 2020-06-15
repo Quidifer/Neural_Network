@@ -16,6 +16,10 @@ Layer::~Layer() {
     }
 }
 
+/*
+input: how many neurons to put into the layer
+creates a Layer with num_neurons with biases set to 0;
+*/
 void Layer::construct(int num_neurons) {
     for (int i = 0; i < num_neurons; ++i) {
         Neuron new_neuron;
@@ -24,6 +28,10 @@ void Layer::construct(int num_neurons) {
     }
 }
 
+/*
+input: pointer to the next layer over
+initializes an adjacency matrix with random weights
+*/
 void Layer::initialize_weights(Layer *next_over) {
     unsigned next_layer_size = next_over->Neurons.size();
     adjacencyMatrix = new double* [next_layer_size];
