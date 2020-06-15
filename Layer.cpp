@@ -6,6 +6,10 @@
 
 using namespace std;
 
+/*
+Destructor for a layer
+destroys all neurons within the layer
+*/
 Layer::~Layer() {
     while (Neurons.size() > 0) {
         Neurons.pop_back();

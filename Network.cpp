@@ -9,6 +9,15 @@
 
 using namespace std;
 
+/*
+constructor
+creates a neural network with biases of each neuron set to 0,
+random weights between -1 and 1.
+There are 4 layers in total
+    1 input layer of 784 nodes to represent all pixels in the initial image
+    2 hidden layers, each with 16 nodes each
+    1 output layer with ten nodes representing the answers for 0-9
+*/
 Network::Network() {
     for (unsigned i = 0; i < num_layers; ++i) {
         Layer new_Layer;
@@ -30,6 +39,15 @@ Network::Network() {
     }
 }
 
+Network::~Network() {
+    while(Layers.size() > 0) {
+        Layers.pop_back();
+    }
+}
+
+/*
+guess the image of the given input. 28x28 grayscale image of a handwritten number
+*/
 int Network::guessImage(vector<vector<unsigned int>> image) {
     unsigned stepper = 0;
 
@@ -46,10 +64,17 @@ int Network::guessImage(vector<vector<unsigned int>> image) {
     int guess = forward_propogation();
 }
 
+/*
+public function for forward propogation
+*/
 int Network::forward_propogation() {
     Layer* test = &(Layers.at(0));
     return forward_propogation(test, 0);
 }
+
+/*
+recursive function that calculates all the weights in the Neural Network
+*/
 int Network::forward_propogation(Layer* curr_layer, int index) {
     if (curr_layer == &Layers.at(Layers.size()-1)) {
         return 1;
@@ -69,6 +94,10 @@ int Network::forward_propogation(Layer* curr_layer, int index) {
     return forward_propogation(&(Layers.at(index+1)), index + 1);
 
 }
+
+/*
+matrix vector multiplication for calculating the activations based on one adjacency matrix
+*/
 void Network::matrix_vector_mult(Layer* curr_layer, vector<double> &activations) {
     double sum = 0;
     for (unsigned i = 0; i < curr_layer->adjacency_rows; ++i) {
@@ -81,6 +110,10 @@ void Network::matrix_vector_mult(Layer* curr_layer, vector<double> &activations)
     }
 }
 
+/*
+simple sigmoid function
+used for squishing down activations between 0 and -1
+*/
 double Network::sigmoid(double x) {
     const double e = 2.71828;
     return 1.0 / (1.0 + pow(e,-x));
@@ -95,6 +128,9 @@ double Network::sigmoid(double x) {
 //     }
 // }
 
+/*
+get a random double between a min and max value
+*/
 double Network::fRand(double fMin, double fMax) {
     double f = (double)rand() / RAND_MAX;
     return fMin + f * (fMax - fMin);
