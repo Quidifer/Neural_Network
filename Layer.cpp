@@ -15,7 +15,7 @@ Layer::~Layer() {
 void Layer::construct(int num_neurons) {
     for (int i = 0; i < num_neurons; ++i) {
         Neuron new_neuron;
-        new_neuron.bias = fRand(-10,10);
+        new_neuron.bias = 0;
         Neurons.push_back(new_neuron);
     }
 }
@@ -35,6 +35,8 @@ void Layer::initialize_weights(Layer *next_over) {
         }
         cout << endl;
     }
+    adjacency_rows = next_layer_size;
+    adjacency_cols = Neurons.size();
     cout << endl;
     cout << endl;
 }
