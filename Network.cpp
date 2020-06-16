@@ -8,8 +8,9 @@
 #include <cmath>
 
 using namespace std;
+static vector<Layer> Layers;
 
-/*
+/**
 constructor
 creates a neural network with biases of each neuron set to 0
 and random weights between -1 and 1.
@@ -18,9 +19,30 @@ There are 4 layers in total
     2 hidden layers, each with 16 nodes each
     1 output layer with ten nodes representing the answers for 0-9
 */
-Network::Network() {
+//Network::Network() {
+//    for (unsigned i = 0; i < num_layers; ++i) {
+//        Layer new_Layer;
+//        if (i == 0) { //construct input layer
+//            new_Layer.construct(num_pixels);
+//        }
+//        else if (i == num_layers - 1) { //construct output layer
+//            new_Layer.construct(10);
+//        }
+//        else { //construct hidden layer
+//            new_Layer.construct(hidden_layer_size);
+//        }
+//
+//        Layers.push_back(new_Layer); //add created layer to layers
+//    }
+//
+//    for (unsigned i = 0; i < Layers.size() - 1; ++i) {
+//        Layers.at(i).initialize_weights(&Layers.at(i+1));
+//    }
+//}
+
+void Network::setup(int num_layers, int hidden_layer_size) {
     for (unsigned i = 0; i < num_layers; ++i) {
-        Layer new_Layer;
+        Layer new_Layer{};
         if (i == 0) { //construct input layer
             new_Layer.construct(num_pixels);
         }
@@ -40,25 +62,14 @@ Network::Network() {
 }
 
 /*
-Destructor
-destroys all Layers within the network
-*/
-Network::~Network() {
-    while(Layers.size() > 0) {
-        Layers.pop_back();
-    }
-}
-
-/*
 input: 2d vector of a 28x28 grayclase image of a handwritten number. Pixels are between 0 and 255
 guess the image of the given input. 28x28 grayscale image of a handwritten number
 */
 int Network::guessImage(vector<vector<unsigned int>> image) {
     unsigned stepper = 0;
-
-    for (unsigned i = 0; i < image.size(); ++i) { //initialize acitvations of the input layer
-        for (unsigned j = 0; j < image.at(i).size(); ++j) {
-            double new_activation = (image.at(i).at(j)/255.0);
+    for (auto & i : image) { //initialize activations of the input layer
+        for (unsigned int j : i) {
+            double new_activation = (j/255.0);
             Layers.at(0).Neurons.at(stepper).activation = new_activation;
             cout << Layers.at(0).Neurons.at(stepper).activation << ' ';
             ++stepper;
@@ -66,28 +77,8 @@ int Network::guessImage(vector<vector<unsigned int>> image) {
         cout << endl;
     }
 
-    int guess = forward_propagation();
+    int guess = Network::forward_propagation();
     return guess;
-}
-
-void Network::train(vector<vector<unsigned>> image, int label) {
-    unsigned stepper = 0;
-
-    for (unsigned i = 0; i < image.size(); ++i) { //initialize acitvations of the input layer
-        for (unsigned j = 0; j < image.at(i).size(); ++j) {
-            double new_activation = (image.at(i).at(j)/255.0);
-            Layers.at(0).Neurons.at(stepper).activation = new_activation;
-            cout << Layers.at(0).Neurons.at(stepper).activation << ' ';
-            ++stepper;
-        }
-        cout << endl;
-    }
-
-    forward_propagation();
-
-    compute_adjustments(&(Layers.at(Layers.size()-1)), label);
-
-    back_propagation();
 }
 
 /*
@@ -95,18 +86,19 @@ public function for forward propagation
 */
 int Network::forward_propagation() {
     Layer* test = &(Layers.at(0));
-    return forward_propagation(test, 0);
+    return Network::forward_propagation(test, 0);
 }
+
 
 /*
 recursive function that calculates all the weights in the Neural Network
 */
 int Network::forward_propagation(Layer* curr_layer, int index) {
     if (curr_layer == &Layers.at(Layers.size()-1)) {
-        return guess_number(curr_layer);
+        return Network::guess_number(curr_layer);
     }
     vector<double> activations;
-     matrix_vector_mult(curr_layer, activations);
+    matrix_vector_mult(curr_layer, activations);
 
      cout << "ACTIVATIONS" << endl;
      cout << "before sig  " << "after sig" << endl;
@@ -119,8 +111,7 @@ int Network::forward_propagation(Layer* curr_layer, int index) {
      }
      cout << endl << endl;
 
-    return forward_propagation(&(Layers.at(index+1)), index + 1);
-
+    return Network::forward_propagation(&(Layers.at(index+1)), index + 1);
 }
 
 /*
@@ -161,16 +152,20 @@ double Network::sigmoid(double x) {
     return 1.0 / (1.0 + pow(e,-x));
 }
 
-/*
-double Network::ReLU(double x) {
-    if (x < 0) {
-        return 0;
-    }
-    else {
-        return x;
-    }
+/** Takes derivative of a function F with an input X. Returns the f'(x). */
+double derivation(double (*f)(double), double x) {
+    double h = 1e-8;
+    return (f(x + h) - f(x + h)) / (2 * h);
 }
-*/
+
+// double Network::ReLU(double x) {
+//     if (x < 0) {
+//         return 0;
+//     }
+//     else {
+//         return x;
+//     }
+// }
 
 /*
 get a random double between a min and max value

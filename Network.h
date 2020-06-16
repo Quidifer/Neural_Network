@@ -4,12 +4,12 @@
 #include <vector>
 #include "Layer.h"
 
-const int num_pixels = 784;
+const static int num_pixels = 784;
 
-const int num_layers = 4;
+//const int num_layers = 4;
 
-const int num_hidden_layers = 2;
-const int hidden_layer_size = 16;
+//const int num_hidden_layers = 2;
+//const int hidden_layer_size = 16;
 
 
 class Network {
@@ -18,27 +18,22 @@ private:
     //input layer
     //2 hidden layers
     //output layer
-    vector<Layer> Layers;
 public:
-    Network();
-    ~Network();
-    int guessImage(vector<vector<unsigned int>>);
-    void train(vector<vector<unsigned>>, int);
+    static int guessImage(vector<vector<unsigned int>>);
+    static int forward_propagation();
+    static void train(int label, unsigned image[28][28]);
+    static void setup(int num_layers=4, int hidden_layer_size=16);
 private:
-    double fRand(double, double);
+    static double fRand(double, double);
+    static int forward_propagation(Layer*, int);
+    static void matrix_vector_mult(Layer*, vector <double> &);
+    static double sigmoid(double);
+    static int guess_number(Layer*);
 
-    int forward_propagation();
-    int forward_propagation(Layer*, int);
-
-    void matrix_vector_mult(Layer*, vector <double> &);
-    int guess_number(Layer*);
-    double sigmoid(double);
-
-    double Cost(Layer*, int);
-    void compute_adjustments(Layer*, int);
-    void back_propagation();
-    void back_propagation(Layer* curr_layer, int index);
-
+    static double Cost(Layer*, int);
+    static void compute_adjustments(Layer*, int);
+    static void back_propagation();
+    static void back_propagation(Layer* curr_layer, int index);
 };
 
 #endif

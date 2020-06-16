@@ -3,4 +3,10 @@
 *.o
 *.out
 
+.idea/
+
 .test/
+
+CMakeLists.txt
+
+Cmake-build-debug/

@@ -11,9 +11,7 @@ Destructor for a layer
 destroys all neurons within the layer
 */
 Layer::~Layer() {
-    while (Neurons.size() > 0) {
-        Neurons.pop_back();
-    }
+    Neurons.clear();
 }
 
 /*
@@ -22,7 +20,7 @@ creates a Layer with num_neurons with biases set to 0;
 */
 void Layer::construct(int num_neurons) {
     for (int i = 0; i < num_neurons; ++i) {
-        Neuron new_neuron;
+        Neuron new_neuron{};
         new_neuron.bias = 0;
         Neurons.push_back(new_neuron);
     }
