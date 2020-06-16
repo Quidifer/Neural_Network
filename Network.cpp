@@ -85,7 +85,7 @@ public function for forward propagation
 */
 int Network::forward_propagation() {
     Layer* test = &(Layers.at(0));
-    return Network::forward_propagation(test, 0);
+    return forward_propagation(test, 0);
 }
 
 
@@ -108,7 +108,7 @@ int Network::forward_propagation(Layer* curr_layer, int index) {
      }
      cout << endl << endl;
 
-    return Network::forward_propagation(&(Layers.at(index+1)), index + 1);
+    return forward_propagation(&(Layers.at(index+1)), index + 1);
 }
 
 /*
