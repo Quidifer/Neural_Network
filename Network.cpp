@@ -66,24 +66,44 @@ int Network::guessImage(vector<vector<unsigned int>> image) {
         cout << endl;
     }
 
-    int guess = forward_propogation();
+    int guess = forward_propagation();
     return guess;
 }
 
+void Network::train(vector<vector<unsigned>> image, int label) {
+    unsigned stepper = 0;
+
+    for (unsigned i = 0; i < image.size(); ++i) { //initialize acitvations of the input layer
+        for (unsigned j = 0; j < image.at(i).size(); ++j) {
+            double new_activation = (image.at(i).at(j)/255.0);
+            Layers.at(0).Neurons.at(stepper).activation = new_activation;
+            cout << Layers.at(0).Neurons.at(stepper).activation << ' ';
+            ++stepper;
+        }
+        cout << endl;
+    }
+
+    forward_propagation();
+
+    compute_adjustments(&(Layers.at(Layers.size()-1)), label);
+
+    back_propagation();
+}
+
 /*
-public function for forward propogation
+public function for forward propagation
 */
-int Network::forward_propogation() {
+int Network::forward_propagation() {
     Layer* test = &(Layers.at(0));
-    return forward_propogation(test, 0);
+    return forward_propagation(test, 0);
 }
 
 /*
 recursive function that calculates all the weights in the Neural Network
 */
-int Network::forward_propogation(Layer* curr_layer, int index) {
+int Network::forward_propagation(Layer* curr_layer, int index) {
     if (curr_layer == &Layers.at(Layers.size()-1)) {
-        return 1;
+        return guess_number(curr_layer);
     }
     vector<double> activations;
      matrix_vector_mult(curr_layer, activations);
@@ -99,7 +119,7 @@ int Network::forward_propogation(Layer* curr_layer, int index) {
      }
      cout << endl << endl;
 
-    return forward_propogation(&(Layers.at(index+1)), index + 1);
+    return forward_propagation(&(Layers.at(index+1)), index + 1);
 
 }
 
@@ -119,6 +139,20 @@ void Network::matrix_vector_mult(Layer* curr_layer, vector<double> &activations)
 }
 
 /*
+input: pointer to the output layer
+output: guess of what the neural network thinks the number is
+*/
+int Network::guess_number(Layer* output_layer) {
+    int max = 0;
+    for (unsigned i = 0; i < output_layer->Neurons.size(); ++i) { //get the max activation index
+        if (output_layer->Neurons.at(i).activation > output_layer->Neurons.at(max).activation) {
+            max = i;
+        }
+    }
+    return max;
+}
+
+/*
 simple sigmoid function
 used for squishing down activations between 0 and -1
 */
@@ -127,14 +161,16 @@ double Network::sigmoid(double x) {
     return 1.0 / (1.0 + pow(e,-x));
 }
 
-// double Network::ReLU(double x) {
-//     if (x < 0) {
-//         return 0;
-//     }
-//     else {
-//         return x;
-//     }
-// }
+/*
+double Network::ReLU(double x) {
+    if (x < 0) {
+        return 0;
+    }
+    else {
+        return x;
+    }
+}
+*/
 
 /*
 get a random double between a min and max value
@@ -143,3 +179,33 @@ double Network::fRand(double fMin, double fMax) {
     double f = (double)rand() / RAND_MAX;
     return fMin + f * (fMax - fMin);
 }
+
+/*
+input: pointer to the output layer
+output: return the cost of the Neural Network
+*/
+double Network::Cost(Layer* output_layer, int label) {
+    double sum = 0;
+    for (unsigned i = 0; i < output_layer->Neurons.size(); ++i) {
+        double cost = pow(output_layer->Neurons.at(i).adjustment_activation,2);
+        sum += cost;
+    }
+    return sum;
+}
+
+void Network::compute_adjustments(Layer* curr_layer, int label) {
+    for (unsigned i = 0; i < curr_layer->Neurons.size(); ++i) {
+        if (i == label) { // activation needs to be 1 at the correct neuron
+            curr_layer->Neurons.at(i).adjustment_activation = 1 - curr_layer->Neurons.at(i).activation;
+        }
+        else { //activation needs to be 0 at the incorrect neurons
+            curr_layer->Neurons.at(i).adjustment_activation = 0 - curr_layer->Neurons.at(i).activation;
+        }
+    }
+}
+
+void Network::back_propagation() {
+    back_propagation(&(Layers.at(Layers.size()-1)), Layers.size()-1);
+}
+
+void Network::back_propagation(Layer* curr_layer, int index) {}

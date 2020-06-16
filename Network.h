@@ -23,13 +23,21 @@ public:
     Network();
     ~Network();
     int guessImage(vector<vector<unsigned int>>);
-    int forward_propogation();
+    void train(vector<vector<unsigned>>, int);
 private:
     double fRand(double, double);
-    int forward_propogation(Layer*, int);
+
+    int forward_propagation();
+    int forward_propagation(Layer*, int);
+
     void matrix_vector_mult(Layer*, vector <double> &);
+    int guess_number(Layer*);
     double sigmoid(double);
 
+    double Cost(Layer*, int);
+    void compute_adjustments(Layer*, int);
+    void back_propagation();
+    void back_propagation(Layer* curr_layer, int index);
 
 };
 
