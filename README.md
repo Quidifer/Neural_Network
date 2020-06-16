@@ -17,7 +17,7 @@ edges connecting any two neurons from one layer to the following layer.
 ### Network
 Static-typed class that stores information regarding each layer. Computes
 forwards propagation and backwards propagation of the network. Essentially 
-manages the all the layers from a global perspective.
+manages all the layers from a global perspective.
 
 ## Authors
 
