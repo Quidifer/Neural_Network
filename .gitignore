@@ -3,6 +3,8 @@
 *.o
 *.out
 
+.idea/
+
 .test/
 
 CMakeLists.txt

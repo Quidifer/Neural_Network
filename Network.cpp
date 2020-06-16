@@ -12,8 +12,8 @@ static vector<Layer> Layers;
 
 /**
 constructor
-creates a neural network with biases of each neuron set to 0,
-random weights between -1 and 1.
+creates a neural network with biases of each neuron set to 0
+and random weights between -1 and 1.
 There are 4 layers in total
     1 input layer of 784 nodes to represent all pixels in the initial image
     2 hidden layers, each with 16 nodes each
@@ -62,6 +62,7 @@ void Network::setup(int num_layers, int hidden_layer_size) {
 }
 
 /*
+input: 2d vector of a 28x28 grayclase image of a handwritten number. Pixels are between 0 and 255
 guess the image of the given input. 28x28 grayscale image of a handwritten number
 */
 int Network::guessImage(vector<vector<unsigned int>> image) {
@@ -94,11 +95,13 @@ recursive function that calculates all the weights in the Neural Network
 */
 int Network::forward_propagation(Layer* curr_layer, int index) {
     if (curr_layer == &Layers.at(Layers.size()-1)) {
-        return 1;
+        return Network::guess_number(curr_layer);
     }
     vector<double> activations;
     matrix_vector_mult(curr_layer, activations);
 
+     cout << "ACTIVATIONS" << endl;
+     cout << "before sig  " << "after sig" << endl;
      for (unsigned i = 0; i < activations.size(); ++i) { //add biases to activations
          activations.at(i) += curr_layer->Neurons.at(i).bias;
          cout << activations.at(i) << "    ";
@@ -124,6 +127,20 @@ void Network::matrix_vector_mult(Layer* curr_layer, vector<double> &activations)
         activations.push_back(sum);
         sum = 0;
     }
+}
+
+/*
+input: pointer to the output layer
+output: guess of what the neural network thinks the number is
+*/
+int Network::guess_number(Layer* output_layer) {
+    int max = 0;
+    for (unsigned i = 0; i < output_layer->Neurons.size(); ++i) { //get the max activation index
+        if (output_layer->Neurons.at(i).activation > output_layer->Neurons.at(max).activation) {
+            max = i;
+        }
+    }
+    return max;
 }
 
 /*
@@ -157,3 +174,33 @@ double Network::fRand(double fMin, double fMax) {
     double f = (double)rand() / RAND_MAX;
     return fMin + f * (fMax - fMin);
 }
+
+/*
+input: pointer to the output layer
+output: return the cost of the Neural Network
+*/
+double Network::Cost(Layer* output_layer, int label) {
+    double sum = 0;
+    for (unsigned i = 0; i < output_layer->Neurons.size(); ++i) {
+        double cost = pow(output_layer->Neurons.at(i).adjustment_activation,2);
+        sum += cost;
+    }
+    return sum;
+}
+
+void Network::compute_adjustments(Layer* curr_layer, int label) {
+    for (unsigned i = 0; i < curr_layer->Neurons.size(); ++i) {
+        if (i == label) { // activation needs to be 1 at the correct neuron
+            curr_layer->Neurons.at(i).adjustment_activation = 1 - curr_layer->Neurons.at(i).activation;
+        }
+        else { //activation needs to be 0 at the incorrect neurons
+            curr_layer->Neurons.at(i).adjustment_activation = 0 - curr_layer->Neurons.at(i).activation;
+        }
+    }
+}
+
+void Network::back_propagation() {
+    back_propagation(&(Layers.at(Layers.size()-1)), Layers.size()-1);
+}
+
+void Network::back_propagation(Layer* curr_layer, int index) {}
