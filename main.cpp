@@ -25,19 +25,18 @@ unsigned int in(ifstream& icin, unsigned int size) {
     return ans;
 }
 
-/** Takes in pass-by-reference IMAGES 3D array and plots the images. */
-void writeToFile(unsigned ***images) {
+/** Takes in pass-by-reference IMAGES 3D array and plots the images. *//*
+void writeToFile(unsigned images[2000][28][28]) {
     FILE * f = fopen("out.ppm", "wb");
-    for (int i = 0; i < sizeof(images); i++) {
-        for (unsigned int row = 0; row < sizeof(images[i]); row++) {
-            for (unsigned int col = 0; col < sizeof(images[i][row]); col++) {
-                cout << images[i][row][col];
-                    fputc(images[i][row][col], f);
+    for (int i = 0; i < 1; i++) {
+        for (unsigned int row = 0; row < 28; row++) {
+            for (unsigned int col = 0; col < 28; col++) {
+                fputc(images[i][row][col], f);
             }
         }
     }
     fclose(f);
-}
+}*/
 
 /** Main Function to parse through training information from MNIST data. */
 int main() {
@@ -47,20 +46,18 @@ int main() {
     num = in(icin, 4);
     rows = in(icin, 4);
     cols = in(icin, 4);
-    unsigned ***images;
-
+    unsigned images[2000][28][28];
     for (unsigned k = 0; k < 2000; ++k) {
         for (unsigned i = 0; i < rows; ++i) {
             for (unsigned j=0; j < cols; ++j) {
                 images[k][i][j] = in(icin, 1);
-                // cout << image[k][i][j] << ' ';
+//                 cout << images[k][i][j] << ' ';
             }
             // cout << endl;
         }
     }
 
-    writeToFile(static_cast<unsigned int ***>(images));
-    
+//    writeToFile(images);
     // cout << magic << endl;
     // cout << num << endl;
     // cout << rows << endl;
@@ -80,7 +77,8 @@ int main() {
     cout << endl;
     icin.close();
 
-    Network new_network;
+//    Network new_network;
+    Network::setup();
     vector<vector<unsigned int> > test_image;
     test_image.resize(rows);
     for (unsigned i = 0; i < rows; ++i) {
@@ -91,7 +89,7 @@ int main() {
             test_image.at(i).at(j) = images[0][i][j];
         }
     }
-    new_network.guessImage(test_image);
+    Network::guessImage(test_image);
 
     return 0;
 }
