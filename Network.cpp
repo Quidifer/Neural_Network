@@ -105,6 +105,7 @@ int Network::forward_propagation(Layer* curr_layer, int index) {
      for (unsigned i = 0; i < activations.size(); ++i) { //add biases to activations
          activations.at(i) += curr_layer->Neurons.at(i).bias;
          cout << activations.at(i) << "    ";
+         Layers.at(index+1).Neurons.at(i).z = activation.at(i);
          activations.at(i) = sigmoid(activations.at(i));
          Layers.at(index+1).Neurons.at(i).activation = activations.at(i);
          cout << activations.at(i) << endl;
@@ -200,7 +201,22 @@ void Network::compute_adjustments(Layer* curr_layer, int label) {
 }
 
 void Network::back_propagation() {
-    back_propagation(&(Layers.at(Layers.size()-1)), Layers.size()-1);
+    back_propagation(&(Layers.at(Layers.size()-2)), Layers.size()-2);
 }
 
-void Network::back_propagation(Layer* curr_layer, int index) {}
+void Network::back_propagation(Layer* curr_layer, int index) {
+    for (unsigned i = 0; i < curr_layer->adjacency_rows; ++i) {
+        for (unsigned j = 0; j < curr_layer->adjacency_cols; ++j) {
+            //double weight_adjustment = adjust_weight(curr_layer, index, i, j);
+        }
+    }
+}
+
+// double adjust_weight(Layer* curr_layer, int index, unsigned i, unsigned j) {
+//     Layer* next_over = &(Layers.at(index+1));
+//     Neuron* right_neuron = ;
+//     Neuron* left_neuron = ;
+//     double dzdw = .activation;
+//     double dadz = derivation(sigmoid(), )
+//     double answer =
+// }
