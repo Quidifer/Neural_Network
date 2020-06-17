@@ -20,7 +20,6 @@ forwards propagation and backwards propagation of the network. Essentially
 manages all the layers from a global perspective.
 
 ## Authors
-
 * **Anderson Tsai**  - [Github](https://github.com/anderson-tsai)
 * **Brad Byun**  - [Github](https://github.com/bhbyun1)
 * **Kevin Tu**  - [Github](https://github.com/kevin20201)

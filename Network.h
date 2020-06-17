@@ -22,13 +22,16 @@ public:
 private:
     static int forward_propagation(Layer*, int);
     static void matrix_vector_mult(Layer*, vector <double> &);
-    static double sigmoid(double);
     static int guess_number(Layer*);
     static double Cost(Layer*);
+    static void train(vector<vector<unsigned>>, int);
     static void compute_adjustments(Layer*, int);
     static void back_propagation();
     static void back_propagation(Layer* curr_layer, int index);
     static void adjust_bias(Layer* l);
+    static double adjust_weight(Layer*, int, unsigned, unsigned);
+//    static double sigmoid(double x);
+//    static double derivation(double (*f)(double), double x);
 };
 
 #endif
