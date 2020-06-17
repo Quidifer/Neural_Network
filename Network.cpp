@@ -14,6 +14,9 @@
 using namespace std;
 static vector<Layer> Layers;
 
+double sigmoid(double);
+double derivation(double (*f)(double), double x);
+
 /**
 constructor
 creates a neural network with biases of each neuron set to 0
@@ -87,7 +90,7 @@ int Network::forward_propagation(Layer* curr_layer, int index) {
      for (unsigned i = 0; i < activations.size(); ++i) { //add biases to activations
          activations.at(i) += sigmoid(curr_layer->Neurons.at(i).bias);
          cout << activations.at(i) << "    ";
-         Layers.at(index+1).Neurons.at(i).z = activation.at(i);
+         Layers.at(index+1).Neurons.at(i).z = activations.at(i);
          activations.at(i) = sigmoid(activations.at(i));
          Layers.at(index+1).Neurons.at(i).activation = activations.at(i);
          cout << activations.at(i) << endl;
@@ -126,7 +129,7 @@ int Network::guess_number(Layer* output_layer) {
 }
 
 /** Sigmoid function. Takes in a double X and returns X scaled between 0 and 1. */
-double Network::sigmoid(double x) {
+double sigmoid(double x) {
     const double e = 2.71828;
     return 1.0 / (1.0 + pow(e,-x));
 }
@@ -161,41 +164,74 @@ double Network::Cost(Layer* output_layer) {
     return sum;
 }
 
+void Network::train(vector<vector<unsigned>> image, int label) {
+    unsigned stepper = 0;
+
+    for (unsigned i = 0; i < image.size(); ++i) { //initialize acitvations of the input layer
+        for (unsigned j = 0; j < image.at(i).size(); ++j) {
+            double new_activation = (image.at(i).at(j)/255.0);
+            Layers.at(0).Neurons.at(stepper).activation = new_activation;
+            cout << Layers.at(0).Neurons.at(stepper).activation << ' ';
+            ++stepper;
+        }
+        cout << endl;
+    }
+
+    forward_propagation();
+
+    compute_adjustments(&(Layers.at(Layers.size()-1)), label);
+
+    back_propagation();
+}
+
 /** FIXME: add method header */
 void Network::compute_adjustments(Layer* curr_layer, int label) {
     for (unsigned i = 0; i < curr_layer->Neurons.size(); ++i) {
         if (i == label) { // activation needs to be 1 at the correct neuron
-            curr_layer->Neurons.at(i).adjustment_activation = 1 - curr_layer->Neurons.at(i).activation;
+            curr_layer->Neurons.at(i).adjustment_activation = curr_layer->Neurons.at(i).activation - 1;
         }
         else { //activation needs to be 0 at the incorrect neurons
-            curr_layer->Neurons.at(i).adjustment_activation = 0 - curr_layer->Neurons.at(i).activation;
+            curr_layer->Neurons.at(i).adjustment_activation = curr_layer->Neurons.at(i).activation - 0;
         }
     }
 }
 
 /** FIXME: add method header */
 void Network::back_propagation() {
+    // back prop starts on last hidden layer, so the biases of the output layer need to be adjusted sooner
+    adjust_bias(&(Layers.at(Layers.size()-1)));
+
     back_propagation(&(Layers.at(Layers.size()-2)), Layers.size()-2);
 }
 
-<<<<<<< HEAD
+/** FIXME: add method header and complete back propogation helper functions */
 void Network::back_propagation(Layer* curr_layer, int index) {
     for (unsigned i = 0; i < curr_layer->adjacency_rows; ++i) {
         for (unsigned j = 0; j < curr_layer->adjacency_cols; ++j) {
             double weight_adjustment = adjust_weight(curr_layer, index, i, j);
+            curr_layer->adjacencyMatrix[i][j] -= weight_adjustment;
         }
     }
+
+    adjust_bias(curr_layer);
 }
 
-double adjust_weight(Layer* curr_layer, int index, unsigned i, unsigned j) {
+double Network::adjust_weight(Layer* curr_layer, int index, unsigned i, unsigned j) {
     Layer* next_over = &(Layers.at(index+1));
-    Neuron* right_neuron;
-    Neuron* left_neuron;
-    double dzdw = curr_layer->Neurons.at(j).activation;
-    double dadz = derivation(sigmoid(), )
-    double answer =
+    Neuron* right_neuron = &(next_over->Neurons.at(i));
+    Neuron* left_neuron = &(curr_layer->Neurons.at(j));
+
+    double dzdw = left_neuron->activation;
+    double dadz = derivation(sigmoid, right_neuron->z);
+    double dCda = 2*(left_neuron->adjustment_activation);
+
+    double answer = dzdw * dadz * dCda;
+
+    return answer;
 }
-=======
-/** FIXME: add method header and complete back propogation helper functions */
-void Network::back_propagation(Layer* curr_layer, int index) {}
->>>>>>> d085041f077dbd4646c5324d8c7436a567350346
+
+void Network::adjust_bias(Layer* l) {
+    for (Neuron &n : l->Neurons) {
+        n.bias -= sigmoid(n.z) * (2 * (n.adjustment_activation));
+    }
+}
