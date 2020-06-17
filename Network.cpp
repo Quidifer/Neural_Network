@@ -85,17 +85,17 @@ int Network::forward_propagation(Layer* curr_layer, int index) {
     vector<double> activations;
     matrix_vector_mult(curr_layer, activations);
 
-     cout << "ACTIVATIONS" << endl;
-     cout << "before sig  " << "after sig" << endl;
+     // cout << "ACTIVATIONS" << endl;
+     // cout << "before sig  " << "after sig" << endl;
      for (unsigned i = 0; i < activations.size(); ++i) { //add biases to activations
          activations.at(i) += sigmoid(curr_layer->Neurons.at(i).bias);
-         cout << activations.at(i) << "    ";
+         // cout << activations.at(i) << "    ";
          Layers.at(index+1).Neurons.at(i).z = activations.at(i);
          activations.at(i) = sigmoid(activations.at(i));
          Layers.at(index+1).Neurons.at(i).activation = activations.at(i);
-         cout << activations.at(i) << endl;
+         // cout << activations.at(i) << endl;
      }
-     cout << endl << endl;
+     // cout << endl << endl;
 
     return forward_propagation(&(Layers.at(index+1)), index + 1);
 }
@@ -137,17 +137,19 @@ double sigmoid(double x) {
 /** Takes derivative of a function F with an input X. Returns the output of f'(x). */
 double derivation(double (*f)(double), double x) {
     double h = 1e-8;
-    return (f(x + h) - f(x + h)) / (2 * h);
+    return (f(x + h) - f(x)) / h;
 }
 
-// double Network::ReLU(double x) {
-//     if (x < 0) {
-//         return 0;
-//     }
-//     else {
-//         return x;
-//     }
-// }
+/*
+double Network::ReLU(double x) {
+    if (x < 0) {
+        return 0;
+    }
+    else {
+        return x;
+    }
+}
+*/
 
 /** Takes in doubles FMIN and FMAX and returns a number between FMIN and FMAX. */
 double Network::fRand(double fMin, double fMax) {
@@ -165,20 +167,21 @@ double Network::Cost(Layer* output_layer) {
 }
 
 void Network::train(vector<vector<unsigned>> image, int label) {
-    unsigned stepper = 0;
 
+    unsigned stepper = 0;
     for (unsigned i = 0; i < image.size(); ++i) { //initialize acitvations of the input layer
         for (unsigned j = 0; j < image.at(i).size(); ++j) {
             double new_activation = (image.at(i).at(j)/255.0);
             Layers.at(0).Neurons.at(stepper).activation = new_activation;
-            cout << Layers.at(0).Neurons.at(stepper).activation << ' ';
+            // cout << Layers.at(0).Neurons.at(stepper).activation << ' ';
             ++stepper;
         }
-        cout << endl;
+        // cout << endl;
     }
 
     forward_propagation();
 
+    //assign the output layer's neurons' adjustment_activation
     compute_adjustments(&(Layers.at(Layers.size()-1)), label);
 
     back_propagation();
@@ -204,34 +207,66 @@ void Network::back_propagation() {
     back_propagation(&(Layers.at(Layers.size()-2)), Layers.size()-2);
 }
 
-/** FIXME: add method header and complete back propogation helper functions */
+/** FIXME: add method header and complete back propogation helper functions
+input: one of the network
+back_propagation changes the weights and biases relative to the
+*/
 void Network::back_propagation(Layer* curr_layer, int index) {
-    for (unsigned i = 0; i < curr_layer->adjacency_rows; ++i) {
-        for (unsigned j = 0; j < curr_layer->adjacency_cols; ++j) {
-            double weight_adjustment = adjust_weight(curr_layer, index, i, j);
-            curr_layer->adjacencyMatrix[i][j] -= weight_adjustment;
-        }
-    }
+
+    adjust_activation(curr_layer, index);
+
+    adjust_weight(curr_layer, index);
 
     adjust_bias(curr_layer);
+
+    if (index > 0) {
+        back_propagation(&(Layers.at(index-1)), index - 1);
+    }
+
 }
 
-double Network::adjust_weight(Layer* curr_layer, int index, unsigned i, unsigned j) {
-    Layer* next_over = &(Layers.at(index+1));
-    Neuron* right_neuron = &(next_over->Neurons.at(i));
-    Neuron* left_neuron = &(curr_layer->Neurons.at(j));
+/**
+a(l-1) * sigmoid'(z(l)) * 2(adjustment_activation)
+*/
+void Network::adjust_weight(Layer* curr_layer, int index) {
+    for (unsigned i = 0; i < curr_layer->adjacency_rows; ++i) {
+        for (unsigned j = 0; j < curr_layer->adjacency_cols; ++j) {
+            Layer* next_over = &(Layers.at(index+1));
+            Neuron* right_neuron = &(next_over->Neurons.at(i));
+            Neuron* left_neuron = &(curr_layer->Neurons.at(j));
 
-    double dzdw = left_neuron->activation;
-    double dadz = derivation(sigmoid, right_neuron->z);
-    double dCda = 2*(left_neuron->adjustment_activation);
+            double dzdw = left_neuron->activation;
+            double dadz = derivation(sigmoid, right_neuron->z);
+            double dCda = 2*(right_neuron->adjustment_activation);
+            curr_layer->adjacencyMatrix[i][j] -= dzdw * dadz * dCda;
+            // cout << curr_layer->adjacencyMatrix[i][j] << ' ';
+        }
+        // cout << endl;
+    }
 
-    double answer = dzdw * dadz * dCda;
-
-    return answer;
 }
 
 void Network::adjust_bias(Layer* l) {
     for (Neuron &n : l->Neurons) {
-        n.bias -= sigmoid(n.z) * (2 * (n.adjustment_activation));
+        n.bias -= derivation(sigmoid, n.z) * (2 * (n.adjustment_activation));
+    }
+}
+
+void Network::adjust_activation(Layer* curr_layer, int index) {
+    Layer* next_over = &(Layers.at(index+1));
+    double sum = 0;
+
+    for (unsigned i = 0; i < curr_layer->Neurons.size(); ++i) { //for each neuron in curr_layer
+        for (unsigned j = 0; j < next_over->Neurons.size(); ++j) { //for each neuron's connection
+            Neuron* right_neuron = &(next_over->Neurons.at(j));
+            Neuron* left_neuron = &(curr_layer->Neurons.at(i));
+
+            double dzda = curr_layer->adjacencyMatrix[j][i]; //dzda = correspoding weight to each connection
+            double dadz = derivation(sigmoid, right_neuron->z);
+            double dCda = 2*(right_neuron->adjustment_activation);
+            sum += dzda * dadz * dCda;
+        }
+        curr_layer->Neurons.at(i).adjustment_activation = sum;
+        sum = 0;
     }
 }
