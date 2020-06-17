@@ -207,16 +207,16 @@ void Network::back_propagation() {
 void Network::back_propagation(Layer* curr_layer, int index) {
     for (unsigned i = 0; i < curr_layer->adjacency_rows; ++i) {
         for (unsigned j = 0; j < curr_layer->adjacency_cols; ++j) {
-            //double weight_adjustment = adjust_weight(curr_layer, index, i, j);
+            double weight_adjustment = adjust_weight(curr_layer, index, i, j);
         }
     }
 }
 
-// double adjust_weight(Layer* curr_layer, int index, unsigned i, unsigned j) {
-//     Layer* next_over = &(Layers.at(index+1));
-//     Neuron* right_neuron = ;
-//     Neuron* left_neuron = ;
-//     double dzdw = .activation;
-//     double dadz = derivation(sigmoid(), )
-//     double answer =
-// }
+double adjust_weight(Layer* curr_layer, int index, unsigned i, unsigned j) {
+    Layer* next_over = &(Layers.at(index+1));
+    Neuron* right_neuron;
+    Neuron* left_neuron;
+    double dzdw = curr_layer->Neurons.at(j).activation;
+    double dadz = derivation(sigmoid(), )
+    double answer =
+}
