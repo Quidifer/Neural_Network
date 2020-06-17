@@ -56,7 +56,7 @@ int Network::guessImage(vector<vector<unsigned int>> image) {
         cout << endl;
     }
 
-    int guess = Network::forward_propagation();
+    int guess = forward_propagation();
     return guess;
 }
 
@@ -83,6 +83,8 @@ int Network::forward_propagation(Layer* curr_layer, int index) {
      for (unsigned i = 0; i < activations.size(); ++i) { //add biases to activations
          activations.at(i) += sigmoid(curr_layer->Neurons.at(i).bias);
          cout << activations.at(i) << "    ";
+         Layers.at(index+1).Neurons.at(i).z = activation.at(i);
+         activations.at(i) = sigmoid(activations.at(i));
          Layers.at(index+1).Neurons.at(i).activation = activations.at(i);
          cout << activations.at(i) << endl;
      }
@@ -169,8 +171,27 @@ void Network::compute_adjustments(Layer* curr_layer, int label) {
 
 /** FIXME: add method header */
 void Network::back_propagation() {
-    back_propagation(&(Layers.at(Layers.size()-1)), Layers.size()-1);
+    back_propagation(&(Layers.at(Layers.size()-2)), Layers.size()-2);
 }
 
+<<<<<<< HEAD
+void Network::back_propagation(Layer* curr_layer, int index) {
+    for (unsigned i = 0; i < curr_layer->adjacency_rows; ++i) {
+        for (unsigned j = 0; j < curr_layer->adjacency_cols; ++j) {
+            double weight_adjustment = adjust_weight(curr_layer, index, i, j);
+        }
+    }
+}
+
+double adjust_weight(Layer* curr_layer, int index, unsigned i, unsigned j) {
+    Layer* next_over = &(Layers.at(index+1));
+    Neuron* right_neuron;
+    Neuron* left_neuron;
+    double dzdw = curr_layer->Neurons.at(j).activation;
+    double dadz = derivation(sigmoid(), )
+    double answer =
+}
+=======
 /** FIXME: add method header and complete back propogation helper functions */
 void Network::back_propagation(Layer* curr_layer, int index) {}
+>>>>>>> d085041f077dbd4646c5324d8c7436a567350346

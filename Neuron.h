@@ -5,6 +5,7 @@ using namespace std;
 
 struct Neuron {
     double activation;
+    double z; //activation prior to sigmoid function
     double bias;
     double adjustment_activation;
     double adjustment_bias;
