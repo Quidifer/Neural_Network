@@ -25,19 +25,6 @@ unsigned int in(ifstream& icin, unsigned int size) {
     return ans;
 }
 
-/** Takes in pass-by-reference IMAGES 3D array and plots the images. *//*
-void writeToFile(unsigned images[2000][28][28]) {
-    FILE * f = fopen("out.ppm", "wb");
-    for (int i = 0; i < 1; i++) {
-        for (unsigned int row = 0; row < 28; row++) {
-            for (unsigned int col = 0; col < 28; col++) {
-                fputc(images[i][row][col], f);
-            }
-        }
-    }
-    fclose(f);
-}*/
-
 /** Main Function to parse through training information from MNIST data. */
 int main() {
     ifstream icin;
@@ -77,7 +64,6 @@ int main() {
     cout << endl;
     icin.close();
 
-//    Network new_network;
     Network::setup();
     vector<vector<unsigned int> > test_image;
     test_image.resize(rows);

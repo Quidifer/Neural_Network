@@ -1,3 +1,8 @@
+/**
+ * Represents a layer in a neural network though a vector that holds Neuron objects.
+ * @author Christopher Mouri, Anderson Tsai
+ */
+#include "Network.h"
 #include "Layer.h"
 #include <climits>
 #include <ctime>
@@ -6,18 +11,12 @@
 
 using namespace std;
 
-/*
-Destructor for a layer
-destroys all neurons within the layer
-*/
+/** Destructor for me. */
 Layer::~Layer() {
     Neurons.clear();
 }
 
-/*
-input: how many neurons to put into the layer
-creates a Layer with num_neurons with biases set to 0;
-*/
+/** Instantiates and places NUM_NEURONS in me. */
 void Layer::construct(int num_neurons) {
     for (int i = 0; i < num_neurons; ++i) {
         Neuron new_neuron{};
@@ -26,10 +25,8 @@ void Layer::construct(int num_neurons) {
     }
 }
 
-/*
-input: pointer to the next layer over
-initializes an adjacency matrix with random weights
-*/
+/** Takes in a pointer to layer NEXT_OVER and initializes an adjacency matrix
+ *  with random weights between the neurons in me and the layer NEXT_OVER */
 void Layer::initialize_weights(Layer *next_over) {
     unsigned next_layer_size = next_over->Neurons.size();
     adjacencyMatrix = new double* [next_layer_size];
@@ -39,7 +36,7 @@ void Layer::initialize_weights(Layer *next_over) {
 
     for (unsigned i = 0; i < next_layer_size; ++i) {
         for (unsigned j = 0; j < Neurons.size(); ++j) {
-            double random_weight = fRand(-1,1);
+            double random_weight = Network::fRand(-1,1);
             adjacencyMatrix[i][j] = random_weight;
             cout << adjacencyMatrix[i][j] << ' ';
         }
@@ -49,9 +46,4 @@ void Layer::initialize_weights(Layer *next_over) {
     adjacency_cols = Neurons.size();
     cout << endl;
     cout << endl;
-}
-
-double Layer::fRand(double fMin, double fMax) {
-    double f = (double)rand() / RAND_MAX;
-    return fMin + f * (fMax - fMin);
 }
