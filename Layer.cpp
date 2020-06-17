@@ -2,7 +2,6 @@
  * Represents a layer in a neural network though a vector that holds Neuron objects.
  * @author Christopher Mouri, Anderson Tsai
  */
-
 #include "Network.h"
 #include "Layer.h"
 #include <climits>
