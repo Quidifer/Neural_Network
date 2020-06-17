@@ -13,11 +13,6 @@ const static int num_pixels = 784;
 
 
 class Network {
-private:
-    //size 4
-    //input layer
-    //2 hidden layers
-    //output layer
 public:
     static int guessImage(vector<vector<unsigned int>>);
     static int forward_propagation();
