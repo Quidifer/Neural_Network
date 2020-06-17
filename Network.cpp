@@ -14,16 +14,12 @@
 using namespace std;
 static vector<Layer> Layers;
 
-/**
-constructor
-creates a neural network with biases of each neuron set to 0
+/** Sets up network. Creates a neural network with biases of each neuron set to 0
 and random weights between -1 and 1.
-There are 4 layers in total
-    1 input layer of 784 nodes to represent all pixels in the initial image
-    2 hidden layers, each with 16 nodes each
-    1 output layer with ten nodes representing the answers for 0-9
-*/
-
+There are 4 layers in total:
+    - 1 input layer of 784 nodes to represent all pixels in the initial image
+    - 2 hidden layers, each with 16 nodes each
+    - 1 output layer with ten nodes representing the answers for 0-9 */
 void Network::setup(int num_layers, int hidden_layer_size) {
     for (unsigned i = 0; i < num_layers; ++i) {
         Layer new_Layer{};
