@@ -60,8 +60,8 @@ int main() {
         // cout << label[i] << ' ';
     }
 
-    cout << endl;
-    cout << endl;
+//    cout << endl;
+//    cout << endl;
     icin.close();
 
     Network::setup();

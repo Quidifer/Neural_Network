@@ -28,6 +28,7 @@ private:
     static void compute_adjustments(Layer*, int);
     static void back_propagation();
     static void back_propagation(Layer* curr_layer, int index);
+    static void adjust_bias(Layer* l);
 };
 
 #endif
