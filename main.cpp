@@ -60,8 +60,8 @@ int main() {
         // cout << label[i] << ' ';
     }
 
-    cout << endl;
-    cout << endl;
+//    cout << endl;
+//    cout << endl;
     icin.close();
 
     Network::setup();
@@ -76,12 +76,8 @@ int main() {
             test_image.at(i).at(j) = images[0][i][j];
         }
     }
-
-    for (unsigned i = 0; i < 100; ++i) {
-        Network::train(test_image, label[0]);
-        // Network::print_output_activations();
-    }
-
-
+    Network::train(test_image, label[0]);
+//    Network::serialize("out");
+//    Network::deserialize("out");
     return 0;
 }

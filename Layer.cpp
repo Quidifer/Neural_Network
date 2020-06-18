@@ -16,7 +16,12 @@ Layer::~Layer() {
     Neurons.clear();
 }
 
-/** Instantiates and places NUM_NEURONS in me. */
+/** Instantiates and places NUM_NEURONS in me.
+
+    1 num_pixels for input
+    2 default 16 neurons for hidden
+    3 10 neurons in output (0-9)
+*/
 void Layer::construct(int num_neurons) {
     for (int i = 0; i < num_neurons; ++i) {
         Neuron new_neuron{};

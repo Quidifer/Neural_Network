@@ -10,6 +10,13 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <stdio.h>
+#include <string.h>
+#include <bits/stdc++.h>
+#include <queue>
 
 using namespace std;
 static vector<Layer> Layers;
@@ -17,16 +24,12 @@ static vector<Layer> Layers;
 double sigmoid(double);
 double derivation(double (*f)(double), double x);
 
-/**
-constructor
-creates a neural network with biases of each neuron set to 0
+/** Creates a neural network with biases of each neuron set to 0
 and random weights between -1 and 1.
-There are 4 layers in total
-    1 input layer of 784 nodes to represent all pixels in the initial image
-    2 hidden layers, each with 16 nodes each
-    1 output layer with ten nodes representing the answers for 0-9
-*/
-
+There are 4 layers in total:
+    - 1 input layer of 784 nodes to represent all pixels in the initial image
+    - 2 hidden layers, each with 16 nodes each
+    - 1 output layer with ten nodes representing the answers for 0-9 */
 void Network::setup(int num_layers, int hidden_layer_size) {
     for (unsigned i = 0; i < num_layers; ++i) {
         Layer new_Layer{};
@@ -50,7 +53,8 @@ void Network::setup(int num_layers, int hidden_layer_size) {
 
 /** Takes a 2D vector of unsigned integers representing a grayscale image. Dimensions of
     2D vector should be 28x28. Returns an integer corresponding to the network's prediction
-    of what number is written in the image.*/
+    of what number is written in the image.
+*/
 int Network::guessImage(vector<vector<unsigned int>> image) {
     unsigned stepper = 0;
     for (auto & i : image) { //initialize activations of the input layer
@@ -68,13 +72,13 @@ int Network::guessImage(vector<vector<unsigned int>> image) {
 }
 
 /** Public function that runs forward propagation on the Network. Returns the result of running
- *  the propogation. */
+ *  the propagation. */
 int Network::forward_propagation() {
     Layer* test = &(Layers.at(0));
     return forward_propagation(test, 0);
 }
 
-/** Helper function for forward propogation. Takes a layer CURR_LAYER, and an INDEX.
+/** Helper function for forward propagation. Takes a layer CURR_LAYER, and an INDEX.
  *  If the CURR_LAYER is the output layer, then the result of guess_number is returned.
  *  Otherwise, */
 int Network::forward_propagation(Layer* curr_layer, int index) {
@@ -83,7 +87,6 @@ int Network::forward_propagation(Layer* curr_layer, int index) {
     }
     vector<double> activations;
     matrix_vector_mult(curr_layer, activations);
-
      // cout << "ACTIVATIONS" << endl;
      // cout << "before sig  " << "after sig" << endl;
      for (unsigned i = 0; i < activations.size(); ++i) { //add biases to activations
@@ -95,7 +98,6 @@ int Network::forward_propagation(Layer* curr_layer, int index) {
          // cout << activations.at(i) << endl;
      }
      // cout << endl << endl;
-
     return forward_propagation(&(Layers.at(index+1)), index + 1);
 }
 
@@ -186,7 +188,6 @@ void Network::train(vector<vector<unsigned>> image, int label) {
 
     //assign the output layer's neurons' adjustment_activation
     compute_adjustments(&(Layers.at(Layers.size()-1)), label);
-
     back_propagation();
 }
 
@@ -206,16 +207,14 @@ void Network::compute_adjustments(Layer* curr_layer, int label) {
 void Network::back_propagation() {
     // back prop starts on last hidden layer, so the biases of the output layer need to be adjusted sooner
     adjust_bias(&(Layers.at(Layers.size()-1)));
-
     back_propagation(&(Layers.at(Layers.size()-2)), Layers.size()-2);
 }
 
-/** FIXME: add method header and complete back propogation helper functions
+/** FIXME: add method header and complete back propagation helper functions
 input: one of the network
 back_propagation changes the weights and biases relative to the
 */
 void Network::back_propagation(Layer* curr_layer, int index) {
-
     adjust_activation(curr_layer, index);
 
     adjust_weight(curr_layer, index);
@@ -225,7 +224,6 @@ void Network::back_propagation(Layer* curr_layer, int index) {
     if (index > 0) {
         back_propagation(&(Layers.at(index-1)), index - 1);
     }
-
 }
 
 /**
@@ -249,6 +247,7 @@ void Network::adjust_weight(Layer* curr_layer, int index) {
 
 }
 
+/** Changes adjustment bias in each neuron in L. */
 void Network::adjust_bias(Layer* l) {
     for (Neuron &n : l->Neurons) {
         n.bias -= derivation(sigmoid, n.z) * (2 * (n.adjustment_activation));
@@ -256,17 +255,17 @@ void Network::adjust_bias(Layer* l) {
 }
 
 void Network::adjust_activation(Layer* curr_layer, int index) {
-    Layer* next_over = &(Layers.at(index+1));
+    Layer *next_over = &(Layers.at(index + 1));
     double sum = 0;
 
     for (unsigned i = 0; i < curr_layer->Neurons.size(); ++i) { //for each neuron in curr_layer
         for (unsigned j = 0; j < next_over->Neurons.size(); ++j) { //for each neuron's connection
-            Neuron* right_neuron = &(next_over->Neurons.at(j));
-            Neuron* left_neuron = &(curr_layer->Neurons.at(i));
+            Neuron *right_neuron = &(next_over->Neurons.at(j));
+            Neuron *left_neuron = &(curr_layer->Neurons.at(i));
 
             double dzda = curr_layer->adjacencyMatrix[j][i]; //dzda = correspoding weight to each connection
             double dadz = derivation(sigmoid, right_neuron->z);
-            double dCda = 2*(right_neuron->adjustment_activation);
+            double dCda = 2 * (right_neuron->adjustment_activation);
             sum += dzda * dadz * dCda;
         }
         sum /= next_over->Neurons.size();
@@ -284,4 +283,65 @@ void Network::print_output_activations() {
     }
     cout << endl;
     cout << endl;
+
+/** Serializes network to file with name NAME. */
+void Network::serialize(string name) {
+    ofstream f (name);
+    for (Layer &l : Layers) {
+        if (l.adjacencyMatrix != nullptr) {
+            for (int i = 0; i < sizeof(l.adjacencyMatrix); i++) {
+                for (int j = 0; j < sizeof(l.adjacencyMatrix[i]); j++) {
+                    f << l.adjacencyMatrix[i][j] << " ";
+                }
+            }
+        }
+    }
+    f << endl;
+    for (Layer &l : Layers) {
+        for (Neuron &n : l.Neurons) {
+            f << n.bias << " ";
+        }
+    }
+    f.close();
+}
+
+/** Deserializes network from file with name NAME. */
+void Network::deserialize(string name) {
+    ifstream f (name);
+    string line;
+    queue<double> weights;
+    queue<double> biases;
+    if (f.is_open()) {
+        getline(f, line); // Get weights
+        double weight;
+        stringstream weightIss (line);
+        while (weightIss >> weight) {
+            weights.push(weight);
+        }
+
+        getline(f, line); // Get biases
+        double bias;
+        stringstream biasIss (line);
+        while (biasIss >> bias) {
+            biases.push(bias);
+        }
+    }
+
+    for (Layer l : Layers) {
+        if (l.adjacencyMatrix != nullptr) {
+            for (int i = 0; i < sizeof(l.adjacencyMatrix); i++) {
+                for (int j = 0; j < sizeof(l.adjacencyMatrix[i]); j++) {
+                    l.adjacencyMatrix[i][j] = weights.front();
+                    weights.pop();
+                }
+            }
+        }
+    }
+
+    for (Layer &l : Layers) {
+        for (Neuron &n : l.Neurons) {
+            n.bias = biases.front();
+            biases.pop();
+        }
+    }
 }
