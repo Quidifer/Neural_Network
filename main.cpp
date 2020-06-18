@@ -75,7 +75,8 @@ int main() {
             test_image.at(i).at(j) = images[0][i][j];
         }
     }
-    Network::guessImage(test_image);
-
+    Network::train(test_image, label[0]);
+//    Network::serialize("out");
+//    Network::deserialize("out");
     return 0;
 }

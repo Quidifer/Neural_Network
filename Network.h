@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "Layer.h"
+#include <string>
 
 const static int num_pixels = 784;
 
@@ -16,22 +17,22 @@ class Network {
 public:
     static int guessImage(vector<vector<unsigned int>>);
     static int forward_propagation();
-    static void train(int label, unsigned image[28][28]);
+    static void train(vector<vector<unsigned>>, int);
     static void setup(int num_layers=4, int hidden_layer_size=16);
     static double fRand(double, double);
+    static void serialize(string name);
+    static void deserialize(string name);
 private:
     static int forward_propagation(Layer*, int);
     static void matrix_vector_mult(Layer*, vector <double> &);
     static int guess_number(Layer*);
     static double Cost(Layer*);
-    static void train(vector<vector<unsigned>>, int);
     static void compute_adjustments(Layer*, int);
     static void back_propagation();
-    static void back_propagation(Layer* curr_layer, int index);
-    static void adjust_bias(Layer* l);
-    static double adjust_weight(Layer*, int, unsigned, unsigned);
-//    static double sigmoid(double x);
-//    static double derivation(double (*f)(double), double x);
+    static void back_propagation(Layer*, int);
+    static void adjust_weight(Layer*, int);
+    static void adjust_bias(Layer*);
+    static void adjust_activation(Layer*, int);
 };
 
 #endif
