@@ -65,17 +65,23 @@ int main() {
     icin.close();
 
     Network::setup();
-    vector<vector<unsigned int> > test_image;
+    vector<vector<unsigned int>> test_image;
     test_image.resize(rows);
     for (unsigned i = 0; i < rows; ++i) {
         test_image.at(i).resize(cols);
+        for (unsigned j = 0; j < )
     }
     for (unsigned i = 0; i < rows; ++i) {
         for (unsigned j = 0; j < cols; ++j) {
             test_image.at(i).at(j) = images[0][i][j];
         }
     }
-    Network::train(test_image, label[0]);
+
+    for (unsigned i = 0; i < 100; ++i) {
+        Network::train(test_image, label[0]);
+        // Network::print_output_activations();
+    }
+
 
     return 0;
 }

@@ -8,8 +8,8 @@ COMPILE = g++
 OBJS = Layer.o Network.o
 
 #Targets
-all: main.cpp $(OBJS)
-	$(COMPILE) $(FLAGS) -o a.out main.cpp $(OBJS)
+all: test_network.cpp $(OBJS)
+	$(COMPILE) $(FLAGS) -o a.out test_network.cpp $(OBJS)
 
 Layer.o: Layer.cpp Neuron.h
 	$(COMPILE) $(FLAGS) -c Layer.cpp

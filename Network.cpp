@@ -57,10 +57,10 @@ int Network::guessImage(vector<vector<unsigned int>> image) {
         for (unsigned int j : i) {
             double new_activation = (j/255.0);
             Layers.at(0).Neurons.at(stepper).activation = new_activation;
-            cout << Layers.at(0).Neurons.at(stepper).activation << ' ';
+            // cout << Layers.at(0).Neurons.at(stepper).activation << ' ';
             ++stepper;
         }
-        cout << endl;
+        // cout << endl;
     }
 
     int guess = forward_propagation();
@@ -73,7 +73,6 @@ int Network::forward_propagation() {
     Layer* test = &(Layers.at(0));
     return forward_propagation(test, 0);
 }
-
 
 /** Helper function for forward propogation. Takes a layer CURR_LAYER, and an INDEX.
  *  If the CURR_LAYER is the output layer, then the result of guess_number is returned.
@@ -113,6 +112,10 @@ void Network::matrix_vector_mult(Layer* curr_layer, vector<double> &activations)
         activations.push_back(sum);
         sum = 0;
     }
+}
+
+int Network::guess_number() {
+    return guess_number(&(Layers.at(Layers.size()-1)));
 }
 
 /** Takes in the OUTPUT_LAYER and finds the neuron with the maximum activation. Returns
@@ -191,10 +194,10 @@ void Network::train(vector<vector<unsigned>> image, int label) {
 void Network::compute_adjustments(Layer* curr_layer, int label) {
     for (unsigned i = 0; i < curr_layer->Neurons.size(); ++i) {
         if (i == label) { // activation needs to be 1 at the correct neuron
-            curr_layer->Neurons.at(i).adjustment_activation = curr_layer->Neurons.at(i).activation - 1;
+            curr_layer->Neurons.at(i).adjustment_activation = curr_layer->Neurons.at(i).activation -1;
         }
         else { //activation needs to be 0 at the incorrect neurons
-            curr_layer->Neurons.at(i).adjustment_activation = curr_layer->Neurons.at(i).activation - 0;
+            curr_layer->Neurons.at(i).adjustment_activation = curr_layer->Neurons.at(i).activation -0;
         }
     }
 }
@@ -266,7 +269,19 @@ void Network::adjust_activation(Layer* curr_layer, int index) {
             double dCda = 2*(right_neuron->adjustment_activation);
             sum += dzda * dadz * dCda;
         }
+        sum /= next_over->Neurons.size();
         curr_layer->Neurons.at(i).adjustment_activation = sum;
         sum = 0;
     }
+}
+
+void Network::print_output_activations() {
+    Layer* output_layer = &(Layers.at(Layers.size()-1));
+
+    cout << "OUTPUT ACTIVATIONS" << endl;
+    for (Neuron & n : output_layer->Neurons) {
+        cout << n.activation << ' ';
+    }
+    cout << endl;
+    cout << endl;
 }

@@ -17,8 +17,10 @@ public:
     static int guessImage(vector<vector<unsigned int>>);
     static int forward_propagation();
     static void train(vector<vector<unsigned>>, int);
-    static void setup(int num_layers=4, int hidden_layer_size=16);
+    static void setup(int num_layers=4, int hidden_layer_size=69);
     static double fRand(double, double);
+    static void print_output_activations();
+    static int guess_number();
 private:
     static int forward_propagation(Layer*, int);
     static void matrix_vector_mult(Layer*, vector <double> &);

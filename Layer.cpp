@@ -38,12 +38,12 @@ void Layer::initialize_weights(Layer *next_over) {
         for (unsigned j = 0; j < Neurons.size(); ++j) {
             double random_weight = Network::fRand(-1,1);
             adjacencyMatrix[i][j] = random_weight;
-            cout << adjacencyMatrix[i][j] << ' ';
+            // cout << adjacencyMatrix[i][j] << ' ';
         }
-        cout << endl;
+        // cout << endl;
     }
     adjacency_rows = next_layer_size;
     adjacency_cols = Neurons.size();
-    cout << endl;
-    cout << endl;
+    // cout << endl;
+    // cout << endl;
 }
