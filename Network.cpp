@@ -53,7 +53,8 @@ void Network::setup(int num_layers, int hidden_layer_size) {
 
 /** Takes a 2D vector of unsigned integers representing a grayscale image. Dimensions of
     2D vector should be 28x28. Returns an integer corresponding to the network's prediction
-    of what number is written in the image.*/
+    of what number is written in the image.
+*/
 int Network::guessImage(vector<vector<unsigned int>> image) {
     unsigned stepper = 0;
     for (auto & i : image) { //initialize activations of the input layer

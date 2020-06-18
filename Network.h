@@ -8,7 +8,6 @@
 const static int num_pixels = 784;
 
 //const int num_layers = 4;
-
 //const int num_hidden_layers = 2;
 //const int hidden_layer_size = 16;
 
