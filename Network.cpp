@@ -263,7 +263,7 @@ void Network::adjust_activation(Layer* curr_layer, int index) {
             Neuron *right_neuron = &(next_over->Neurons.at(j));
             Neuron *left_neuron = &(curr_layer->Neurons.at(i));
 
-            double dzda = curr_layer->adjacencyMatrix[j][i]; //dzda = correspoding weight to each connection
+            double dzda = curr_layer->adjacencyMatrix[j][i]; //dzda = corresponding weight to each connection
             double dadz = derivation(sigmoid, right_neuron->z);
             double dCda = 2 * (right_neuron->adjustment_activation);
             sum += dzda * dadz * dCda;
@@ -275,10 +275,10 @@ void Network::adjust_activation(Layer* curr_layer, int index) {
 }
 
 void Network::print_output_activations() {
-    Layer* output_layer = &(Layers.at(Layers.size()-1));
+    Layer *output_layer = &(Layers.at(Layers.size() - 1));
 
     cout << "OUTPUT ACTIVATIONS" << endl;
-    for (Neuron & n : output_layer->Neurons) {
+    for (Neuron &n : output_layer->Neurons) {
         cout << n.activation << ' ';
     }
     cout << endl;
@@ -332,6 +332,7 @@ void Network::deserialize(string name) {
         if (l.adjacencyMatrix != nullptr) {
             for (int i = 0; i < sizeof(l.adjacencyMatrix); i++) {
                 for (int j = 0; j < sizeof(l.adjacencyMatrix[i]); j++) {
+                    cout << weights.front() << endl;
                     l.adjacencyMatrix[i][j] = weights.front();
                     weights.pop();
                 }
@@ -343,6 +344,11 @@ void Network::deserialize(string name) {
         for (Neuron &n : l.Neurons) {
             n.bias = biases.front();
             biases.pop();
+        }
+    }
+    for (Layer &l : Layers) {
+        for (Neuron &n : l.Neurons) {
+            cout << n.bias << endl;
         }
     }
 }
