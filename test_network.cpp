@@ -27,15 +27,19 @@ unsigned int in(ifstream& icin, unsigned int size) {
 
 /** Main Function to parse through training information from MNIST data. */
 int main() {
+    ifstream serializedFile ("out");
     ifstream imagein;
     ifstream labelin;
     imagein.open("train/train-images.idx3-ubyte", ios::binary);
     labelin.open("train/train-labels.idx1-ubyte", ios::binary);
-
     magic = in(imagein, 4);
     num = in(imagein, 4);
     rows = in(imagein, 4);
     cols = in(imagein, 4);
+
+    if (serializedFile) {
+        Network::deserialize("out");
+    }
 
     vector<vector<unsigned>> images;
     unsigned label;
@@ -55,8 +59,8 @@ int main() {
     double num_training_guesses = 0;
     double num_training_correct = 0;
     for (unsigned i = 0; i < 60000; ++i) { //for 60,000 images
-        for (vector<unsigned> & i : images) { //input an image
-            for (unsigned & j : i) {
+        for (vector<unsigned> &i : images) { //input an image
+            for (unsigned &j : i) {
                 j = in(imagein, 1);
                 // cout << j << ' ';
             }
@@ -65,42 +69,42 @@ int main() {
 
         label = in(labelin, 1); // input a corresponding label
         // cout << "Label: " << label << endl << endl;
-
-        if (i < 60000 - 1000) {
+        if (i < 60000 - 1000 && !serializedFile) {
             Network::train(images, label);
             int guess = Network::guess_number();
             ++num_training_guesses;
-            if (guess==label) {
+            if (guess == label) {
                 ++num_training_correct;
             }
 
             if (i % 100 == 0) {
-                cout << i << " iterations!! ";
-                cout << "percentange correct: " << num_training_correct/num_training_guesses << endl;
+                cout << i << " iterations. ";
+                cout << "Percentage Correct: " << num_training_correct / num_training_guesses << endl;
                 if (i % 1000 == 0) {
                     num_training_correct = 0;
                     num_training_guesses = 0;
-                    cout << "\t \t resetting correct percentage..." << endl;
+                    cout << "\t \t Resetting correct percentage." << endl;
                 }
             }
         }
+
         else {
             ++num_guesses;
             double answer = Network::guessImage(images);
-            cout << answer
-            << "  Correct label: " << label << endl;
-            Network::print_output_activations();
-            cout << endl << endl;
+//            cout << answer
+//            << "  Correct label: " << label << endl;
+//            Network::print_output_activations();
+//            cout << endl << endl;
 
             if (answer == label) {
                 ++num_correct;
             }
         }
-
     }
 
-    cout << "accuracy of network: " << num_correct / num_guesses << endl;
-
-
-    return 0;
+    cout << "Accuracy of network: " << num_correct / num_guesses << endl;
+    if (!serializedFile) {
+        Network::serialize("out");
+    }
+   return 0;
 }
