@@ -268,7 +268,7 @@ void Network::adjust_activation(Layer* curr_layer, int index) {
             double dCda = 2 * (right_neuron->adjustment_activation);
             sum += dzda * dadz * dCda;
         }
-        // sum /= next_over->Neurons.size();
+        sum /= next_over->Neurons.size();
         curr_layer->Neurons.at(i).adjustment_activation = sum;
         sum = 0;
     }
@@ -345,4 +345,8 @@ void Network::deserialize(string name) {
             biases.pop();
         }
     }
+}
+
+unsigned Network::layer_size() {
+    return Layers.size();
 }

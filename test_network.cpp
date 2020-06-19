@@ -75,8 +75,10 @@ int main() {
             }
 
             if (i % 100 == 0) {
+
                 cout << i << " iterations!! ";
                 cout << "percentange correct: " << num_training_correct/num_training_guesses << endl;
+                cout << "layer_size: " << Network::layer_size() << endl;
                 if (i % 1000 == 0) {
                     num_training_correct = 0;
                     num_training_guesses = 0;
