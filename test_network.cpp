@@ -4,6 +4,7 @@
 #include "Neuron.h"
 #include "Network.h"
 #include "Layer.h"
+#include <string>
 
 using namespace std;
 
@@ -27,7 +28,8 @@ unsigned int in(ifstream& icin, unsigned int size) {
 
 /** Main Function to parse through training information from MNIST data. */
 int main() {
-    ifstream serializedFile ("out");
+    string output_file = "training_sets/network_4_25";
+    ifstream serializedFile (output_file);
     ifstream imagein;
     ifstream labelin;
     imagein.open("train/train-images.idx3-ubyte", ios::binary);
@@ -38,7 +40,10 @@ int main() {
     cols = in(imagein, 4);
 
     if (serializedFile) {
-        Network::deserialize("out");
+        Network::deserialize(output_file);
+    }
+    else {
+        Network::setup();
     }
 
     vector<vector<unsigned>> images;
@@ -50,8 +55,6 @@ int main() {
 
     magic = in(labelin, 4);
     num = in(labelin, 4);
-
-    Network::setup();
 
     double num_guesses = 0;
     double num_correct = 0;
@@ -81,7 +84,7 @@ int main() {
 
                 cout << i << " iterations!! ";
                 cout << "percentange correct: " << num_training_correct/num_training_guesses << endl;
-                cout << "layer_size: " << Network::layer_size() << endl;
+                // cout << "layer_size: " << Network::layer_size() << endl;
                 if (i % 1000 == 0) {
                     num_training_correct = 0;
                     num_training_guesses = 0;
@@ -105,8 +108,6 @@ int main() {
     }
 
     cout << "Accuracy of network: " << num_correct / num_guesses << endl;
-    if (!serializedFile) {
-        Network::serialize("out");
-    }
+    Network::serialize(output_file);
    return 0;
 }

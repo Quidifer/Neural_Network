@@ -3,7 +3,7 @@
 #type 'make clean' to remove object files
 
 #variables
-COMPILE = g++-9
+COMPILE = g++
 # FLAGS = -g -W -Wall -Werror -ansi -pedantic
 OBJS = Layer.o Network.o
 

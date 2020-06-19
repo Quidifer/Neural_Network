@@ -288,10 +288,12 @@ void Network::print_output_activations() {
 /** Serializes network to file with name NAME. */
 void Network::serialize(string name) {
     ofstream f (name);
+    f << Layers.size() << ' ';
+    f << Layers.at(1).Neurons.size() << endl;
     for (Layer &l : Layers) {
         if (l.adjacencyMatrix != nullptr) {
-            for (int i = 0; i < sizeof(l.adjacencyMatrix); i++) {
-                for (int j = 0; j < sizeof(l.adjacencyMatrix[i]); j++) {
+            for (int i = 0; i < l.adjacency_rows; i++) {
+                for (int j = 0; j < l.adjacency_cols; j++) {
                     f << l.adjacencyMatrix[i][j] << " ";
                 }
             }
@@ -313,6 +315,14 @@ void Network::deserialize(string name) {
     queue<double> weights;
     queue<double> biases;
     if (f.is_open()) {
+        getline(f, line);
+        stringstream iss(line);
+        int num_layers;
+        int hidden_layer_size;
+        iss >> num_layers >> hidden_layer_size;
+
+        setup(num_layers, hidden_layer_size);
+
         getline(f, line); // Get weights
         double weight;
         stringstream weightIss (line);
@@ -330,9 +340,9 @@ void Network::deserialize(string name) {
 
     for (Layer l : Layers) {
         if (l.adjacencyMatrix != nullptr) {
-            for (int i = 0; i < sizeof(l.adjacencyMatrix); i++) {
-                for (int j = 0; j < sizeof(l.adjacencyMatrix[i]); j++) {
-                    cout << weights.front() << endl;
+            for (int i = 0; i < l.adjacency_rows; i++) {
+                for (int j = 0; j < l.adjacency_cols; j++) {
+                    // cout << weights.front() << endl;
                     l.adjacencyMatrix[i][j] = weights.front();
                     weights.pop();
                 }
@@ -340,17 +350,18 @@ void Network::deserialize(string name) {
         }
     }
 
+
     for (Layer &l : Layers) {
         for (Neuron &n : l.Neurons) {
             n.bias = biases.front();
             biases.pop();
         }
     }
-    for (Layer &l : Layers) {
-        for (Neuron &n : l.Neurons) {
-            cout << n.bias << endl;
-        }
-    }
+    // for (Layer &l : Layers) {
+    //     for (Neuron &n : l.Neurons) {
+    //         cout << n.bias << endl;
+    //     }
+    // }
 }
 
 unsigned Network::layer_size() {
