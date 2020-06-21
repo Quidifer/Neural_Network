@@ -4,6 +4,7 @@
 #include "Neuron.h"
 #include "Network.h"
 #include "Layer.h"
+#include "Network_ReLU.h"
 #include <string>
 
 using namespace std;
@@ -28,7 +29,7 @@ unsigned int in(ifstream& icin, unsigned int size) {
 
 /** Main Function to parse through training information from MNIST data. */
 int main() {
-    string output_file = "training_sets/network_4_25";
+    string output_file = "training_sets/ReLU_6_10";
     ifstream serializedFile (output_file);
     ifstream imagein;
     ifstream labelin;
@@ -40,10 +41,10 @@ int main() {
     cols = in(imagein, 4);
 
     if (serializedFile) {
-        Network::deserialize(output_file);
+        Network_ReLU::deserialize(output_file);
     }
     else {
-        Network::setup();
+        Network_ReLU::setup();
     }
 
     vector<vector<unsigned>> images;
@@ -74,7 +75,7 @@ int main() {
         // cout << "Label: " << label << endl << endl;
         if (i < 60000 - 1000 && !serializedFile) {
             Network::train(images, label);
-            int guess = Network::guess_number();
+            int guess = Network_ReLU::guess_number();
             ++num_training_guesses;
             if (guess == label) {
                 ++num_training_correct;
@@ -95,7 +96,7 @@ int main() {
 
         else {
             ++num_guesses;
-            double answer = Network::guessImage(images);
+            double answer = Network_ReLU::guessImage(images);
 //            cout << answer
 //            << "  Correct label: " << label << endl;
 //            Network::print_output_activations();
@@ -108,6 +109,6 @@ int main() {
     }
 
     cout << "Accuracy of network: " << num_correct / num_guesses << endl;
-    Network::serialize(output_file);
+    Network_ReLU::serialize(output_file);
    return 0;
 }

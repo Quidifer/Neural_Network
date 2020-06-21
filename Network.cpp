@@ -191,7 +191,7 @@ void Network::train(vector<vector<unsigned>> image, int label) {
     back_propagation();
 }
 
-/** FIXME: add method header */
+/** assign the output layer's neurons' adjustment_activation */
 void Network::compute_adjustments(Layer* curr_layer, int label) {
     for (unsigned i = 0; i < curr_layer->Neurons.size(); ++i) {
         if (i == label) { // activation needs to be 1 at the correct neuron
