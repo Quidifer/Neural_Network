@@ -1,7 +1,7 @@
 ### Usage
 
-compile: typing "make" in linux terminal will compile the program under the sigmoid activation function.\n
-         typing "make TYPE=RELU" in linux terminal will compile under the ReLU activation function."
+compile: typing "make" in linux terminal will compile the program under the sigmoid activation function.
+         typing "make TYPE=RELU" in linux terminal will compile under the ReLU activation function.
 
 # Digit Classifier
 
