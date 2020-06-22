@@ -45,7 +45,7 @@ weights and biases each time we run backpropagation on an image. We understand t
 the runtime, and will attempt using mini batches in our upcoming projects.
 
 # Relevant Calculus Behind Back Propagation
- ![alt text](https://raw.githubusercontent.com/Quidifer/Neural_Network/master/math-page-001.jpg)
+ ![alt text](https://raw.githubusercontent.com/Quidifer/Neural_Network/master/images/math-page-001.jpg)
 
 
 ## Authors
