@@ -17,9 +17,12 @@
 using namespace std;
 static vector<Layer> Layers;
 
+//definitions
 double ReLU(double);
 double derivation(double (*f)(double), double x);
 
+/** ReLU activation function. Simple, but effective. Adheres different reselts
+*   when using this function instead of sigmoid. */
 double ReLU(double x) {
     if (x < 0) {
         return 0;
@@ -29,10 +32,31 @@ double ReLU(double x) {
     }
 }
 
+/** Takes derivative of a function F with an input X. Returns the output of f'(x). */
 double derivation(double (*f)(double), double x) {
     double h = 1e-8;
     return (f(x + h) - f(x)) / h;
 }
+
+/** Extra function added for ReLU. When computing activation_adjustment for the output layer, compute_adjustments()
+*   needs to find the maximum activation in the output layer. The cost function used for ReLU is as follows:
+*
+*   C = (activation - get_max(output_layer))^2 <-- for the neuron corresponding to the correct label
+*   C = (activation - 0)^2 <-- for the neuron corresponding to an incorrect label
+*   *then add all Cs together to get the cost*   */
+int Network_ReLU::get_max(Layer* output_layer) {
+    int max = 0;
+    for (Neuron & n : output_layer->Neurons) {
+        if (n.activation > max) {
+            max = n.activation;
+        }
+    }
+    return max;
+}
+
+
+//The remainder functions are overloaded functions that require ReLU to be used instead of sigmoid
+//method headers for those functions are in Network.cpp
 
 int Network_ReLU::forward_propagation(Layer* curr_layer, int index) {
     if (curr_layer == &Layers.at(Layers.size()-1)) {
@@ -107,14 +131,4 @@ void Network_ReLU::adjust_activation(Layer* curr_layer, int index) {
         curr_layer->Neurons.at(i).adjustment_activation = sum;
         sum = 0;
     }
-}
-
-int Network_ReLU::get_max(Layer* output_layer) {
-    int max = 0;
-    for (Neuron & n : output_layer->Neurons) {
-        if (n.activation > max) {
-            max = n.activation;
-        }
-    }
-    return max;
 }

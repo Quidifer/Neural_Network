@@ -23,7 +23,6 @@ public:
     static int guess_number();
     static void serialize(string name);
     static void deserialize(string name);
-    static unsigned layer_size();
 private:
     static int forward_propagation(Layer*, int);
     static void matrix_vector_mult(Layer*, vector <double> &);

@@ -116,6 +116,7 @@ void Network::matrix_vector_mult(Layer* curr_layer, vector<double> &activations)
     }
 }
 
+/** public function for guess_number() without any parameters */
 int Network::guess_number() {
     return guess_number(&(Layers.at(Layers.size()-1)));
 }
@@ -145,17 +146,6 @@ double derivation(double (*f)(double), double x) {
     return (f(x + h) - f(x)) / h;
 }
 
-/*
-double Network::ReLU(double x) {
-    if (x < 0) {
-        return 0;
-    }
-    else {
-        return x;
-    }
-}
-*/
-
 /** Takes in doubles FMIN and FMAX and returns a number between FMIN and FMAX. */
 double Network::fRand(double fMin, double fMax) {
     double f = (double)rand() / RAND_MAX;
@@ -171,6 +161,8 @@ double Network::Cost(Layer* output_layer) {
     return sum;
 }
 
+/** Trains the network. Takes in a 2d image vector, and a corresponding label to that image.
+*   The function trains, and adjusts weights, and biases for the input image using gradient descent */
 void Network::train(vector<vector<unsigned>> image, int label) {
 
     unsigned stepper = 0;
@@ -203,17 +195,16 @@ void Network::compute_adjustments(Layer* curr_layer, int label) {
     }
 }
 
-/** FIXME: add method header */
+/** Main work horse of the training function. Recursive function that adjusts weights and biases based upon
+* the correct activations of the training data. */
 void Network::back_propagation() {
     // back prop starts on last hidden layer, so the biases of the output layer need to be adjusted sooner
     adjust_bias(&(Layers.at(Layers.size()-1)));
     back_propagation(&(Layers.at(Layers.size()-2)), Layers.size()-2);
 }
 
-/** FIXME: add method header and complete back propagation helper functions
-input: one of the network
-back_propagation changes the weights and biases relative to the
-*/
+/**  input: pointer to one of the network's layers.
+*    private method of back_propagation. explained in method header above. */
 void Network::back_propagation(Layer* curr_layer, int index) {
     adjust_activation(curr_layer, index);
 
@@ -226,8 +217,10 @@ void Network::back_propagation(Layer* curr_layer, int index) {
     }
 }
 
-/**
-a(l-1) * sigmoid'(z(l)) * 2(adjustment_activation)
+/** a(l-1) * sigmoid'(z(l)) * 2(adjustment_activation)
+*   adjusts all the weights based for one particular layer.
+*   Takes in a pointer to the layer that the program needs to adjust, as
+*   well as the index to that layer in the Layers vector of the network
 */
 void Network::adjust_weight(Layer* curr_layer, int index) {
     for (unsigned i = 0; i < curr_layer->adjacency_rows; ++i) {
@@ -247,13 +240,22 @@ void Network::adjust_weight(Layer* curr_layer, int index) {
 
 }
 
-/** Changes adjustment bias in each neuron in L. */
+/** Changes adjustment bias in each neuron in L.
+*   Takes in a pointer to the layer that needs to be adjusted */
 void Network::adjust_bias(Layer* l) {
     for (Neuron &n : l->Neurons) {
         n.bias -= derivation(sigmoid, n.z) * (2 * (n.adjustment_activation));
     }
 }
 
+/** Changes the adjustment activation variable for each neuron in the given layer.
+*   This is needed so the program can recusively call back propagation.
+*   The adjustment_activation variable refers to the derivative of the Cost function,
+*   with respect to activation.
+*
+*   For example: Given any given neuron from the network.
+*   That neuron's activation -= adjustment_activation should give the desired activation for
+*   that neuron. */
 void Network::adjust_activation(Layer* curr_layer, int index) {
     Layer *next_over = &(Layers.at(index + 1));
     double sum = 0;
@@ -274,6 +276,7 @@ void Network::adjust_activation(Layer* curr_layer, int index) {
     }
 }
 
+/** public function. outputs the activations of the ouput layer after a forward propagation */
 void Network::print_output_activations() {
     Layer *output_layer = &(Layers.at(Layers.size() - 1));
 
@@ -362,8 +365,4 @@ void Network::deserialize(string name) {
     //         cout << n.bias << endl;
     //     }
     // }
-}
-
-unsigned Network::layer_size() {
-    return Layers.size();
 }
