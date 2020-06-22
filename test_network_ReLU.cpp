@@ -11,7 +11,6 @@ using namespace std;
 
 const int MAXN = 6e4 + 7;
 unsigned int num, magic, rows, cols;
-// unsigned int label[MAXN];
 
 /** Takes in a stream ICIN and a SIZE and returns the decimal number present at the given position in
     the stream. */
@@ -29,8 +28,54 @@ unsigned int in(ifstream& icin, unsigned int size) {
 
 /** Main Function to parse through training information from MNIST data. */
 int main() {
-    string output_file = "training_sets/ReLU_6_10";
+    cout << "This file trains and test networks using the ReLU activation function" << endl;
+    char input;
+    while (input != 'y' && input != 'n') {
+        cout << "Would you like to continue? y/n: " << endl;
+        cin >> input;
+        cout << endl;
+        if (input == 'n') {
+            return 1;
+        }
+    }
+    cout << endl;
+
+    string output_file = "training_sets_ReLU/";
+    if (output_file == "training_sets_ReLU/") {
+        cout << "Waiting for output file name. Type existing file or name of new file: ";
+        string input;
+        cin >> input;
+        output_file += input;
+    }
+    cout << endl;
+
     ifstream serializedFile (output_file);
+    bool train = true;
+    if (serializedFile) {
+        while (input != 't' && input != 's' && input != 'q') {
+            cout << output_file << " already exists. Type 't' to continue training or 's' to test the serialized network.\n"
+            << "Type 'q' to quit: ";
+            cin >> input;
+            if (input == 'q') {
+                return 1;
+            }
+            else if (input == 's') {
+                train = false;
+            }
+        }
+
+    }
+    else {
+        cout << output_file << " is a new file" << endl;
+    }
+
+    if (train) {
+        cout << "training network..." << endl;
+    }
+    else {
+        cout << "testing serialized network..." << endl;
+    }
+
     ifstream imagein;
     ifstream labelin;
     imagein.open("train/train-images.idx3-ubyte", ios::binary);
@@ -44,13 +89,21 @@ int main() {
         Network_ReLU::deserialize(output_file);
     }
     else {
-        Network_ReLU::setup();
+        int num_layers;
+        int hidden_layer_size;
+        cout << "input number of layers including hidden and output layers: ";
+        cin >> num_layers;
+        cout << endl;
+        cout << "input number of neurons in each hidden layer (due to slow computations, 50 or more neurons will have slow run times): ";
+        cin >> hidden_layer_size;
+        cout << endl;
+        Network_ReLU::setup(num_layers, hidden_layer_size);
     }
 
     vector<vector<unsigned>> images;
     unsigned label;
     images.resize(28);
-    for (unsigned i = 0; i < images.size(); ++i) {
+    for (unsigned i = 0; i < images.size(); ++i) { //setup image size
         images.at(i).resize(28);
     }
 
@@ -66,15 +119,12 @@ int main() {
         for (vector<unsigned> &i : images) { //input an image
             for (unsigned &j : i) {
                 j = in(imagein, 1);
-                // cout << j << ' ';
             }
-            // cout << endl;
         }
-
         label = in(labelin, 1); // input a corresponding label
-        // cout << "Label: " << label << endl << endl;
-        if (i < 60000 - 1000 && !serializedFile) {
-            Network::train(images, label);
+
+        if (i < 60000 - 1000 && train) {
+            Network_ReLU::train(images, label);
             int guess = Network_ReLU::guess_number();
             ++num_training_guesses;
             if (guess == label) {
@@ -85,11 +135,10 @@ int main() {
 
                 cout << i << " iterations!! ";
                 cout << "percentange correct: " << num_training_correct/num_training_guesses << endl;
-                // cout << "layer_size: " << Network::layer_size() << endl;
                 if (i % 1000 == 0) {
                     num_training_correct = 0;
                     num_training_guesses = 0;
-                    cout << "\t \t Resetting correct percentage." << endl;
+                    cout << "\t \t Resetting percentage..." << endl;
                 }
             }
         }
@@ -109,6 +158,17 @@ int main() {
     }
 
     cout << "Accuracy of network: " << num_correct / num_guesses << endl;
-    Network_ReLU::serialize(output_file);
+    cout << endl;
+
+    input = 'z';
+    while (input != 'y' && input != 'n') {
+        cout << "Would you like to save this training set? y/n: ";
+        cin >> input;
+        cout << endl;
+        if (input == 'y') {
+            Network_ReLU::serialize(output_file);
+        }
+    }
+
    return 0;
 }

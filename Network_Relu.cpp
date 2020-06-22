@@ -66,6 +66,7 @@ void Network_ReLU::compute_adjustments(Layer* curr_layer, int label) {
     }
 }
 
+/** Overloaded functions for adjusting weights and biases using ReLU*/
 void Network_ReLU::adjust_weight(Layer* curr_layer, int index) {
     for (unsigned i = 0; i < curr_layer->adjacency_rows; ++i) {
         for (unsigned j = 0; j < curr_layer->adjacency_cols; ++j) {
@@ -83,14 +84,11 @@ void Network_ReLU::adjust_weight(Layer* curr_layer, int index) {
     }
 
 }
-
-/** Changes adjustment bias in each neuron in L. */
 void Network_ReLU::adjust_bias(Layer* l) {
     for (Neuron &n : l->Neurons) {
         n.bias -= derivation(ReLU, n.z) * (2 * (n.adjustment_activation));
     }
 }
-
 void Network_ReLU::adjust_activation(Layer* curr_layer, int index) {
     Layer *next_over = &(Layers.at(index + 1));
     double sum = 0;
