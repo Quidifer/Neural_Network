@@ -1,13 +1,13 @@
 # Usage
 
-compile the program under the sigmoid activation function.
+Compile the program under the sigmoid activation function.
 ```bash
 make
 ```
 
 <br>
 
-compile under the ReLU activation function.
+Compile under the ReLU activation function.
 ```bash
 make TYPE=RELU
 ```
