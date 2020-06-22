@@ -42,8 +42,12 @@ in the hidden layers).
 We do not use epochs/ mini-batches. For this project, we were not as focused on the runtime of our program.
 Instead, we focused on the way a neural network learns through back propagation. Our network adjusts its
 weights and biases each time we run backpropagation on an image. We understand that this significantly effects
- the runtime, and will attempt using mini batches in our upcoming projects.
-
+the runtime, and will attempt using mini batches in our upcoming projects.
+ 
+# Relevent Calculus Behind Back Propogation 
+ ![alt text](https://raw.githubusercontent.com/Quidifer/Neural_Network/master/math-page-001.jpg)
+ 
+ 
 ## Authors
 * **Anderson Tsai**  - [Github](https://github.com/anderson-tsai)
 * **Brad Byun**  - [Github](https://github.com/bhbyun1)
