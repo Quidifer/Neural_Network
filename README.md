@@ -1,10 +1,11 @@
-### Usage
+# Usage
 
 compile the program under the sigmoid activation function.
 ```bash
 make
 ```
 
+<br>
 
 compile under the ReLU activation function.
 ```bash
